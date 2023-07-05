@@ -79,8 +79,8 @@ To contribute to the project or develop additional features, follow these steps:
 
 ### Prerequisites
 
--   Node.js (version X.X.X)
--   NPM (version X.X.X)
+-   Node.js
+-   NPM
 
 ### Installation
 
