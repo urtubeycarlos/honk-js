@@ -25,7 +25,7 @@ HonkJS is a lightweight state management library for vanilla JavaScript.
 
 Make sure to replace `/example.com/path/to/honk.js` with the actual path where the `honk.js` file is hosted.
 
-By providing a download link and including the `honk.js` file using a `<script>` tag, users will be able to download and use the file by accessing your web page.
+By providing a download [link](https://github.com/urtubeycarlos/honk-js/releases/tag/v1) and including the `honk.js` file using a `<script>` tag, users will be able to download and use the file by accessing your web page.
 `<script src="https://example.com/path/to/honk.js"></script>`
 
 ## Usage
