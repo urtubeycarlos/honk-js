@@ -1,0 +1,31 @@
+{
+	"name": "honk-js",
+	"version": "1.0.0",
+	"description": "Basic state management for Vanilla JS",
+	"main": "src/honk.js",
+	"scripts": {
+		"dev": "vite --host --open",
+		"build": "vite build",
+		"serve": "vite preview"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/urtubeycarlos/honk.js.git"
+	},
+	"keywords": [
+		"state",
+		"management",
+		"vanilla",
+		"js"
+	],
+	"author": "Carlos Urtubey",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/urtubeycarlos/honk.js/issues"
+	},
+	"homepage": "https://github.com/urtubeycarlos/honk.js#readme",
+	"devDependencies": {
+		"qunit": "^2.19.4",
+		"vite": "^2.4.3"
+	}
+}

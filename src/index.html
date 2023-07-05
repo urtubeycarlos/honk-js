@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>HonkJS</title>
+		<link
+			rel="stylesheet"
+			href="https://code.jquery.com/qunit/qunit-2.16.0.css"
+		/>
+	</head>
+	<body>
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+		<script src="/@vite/client"></script>
+		<script src="/@vite/env"></script>
+		<script src="https://code.jquery.com/qunit/qunit-2.16.0.js"></script>
+		<script src="/honk.js"></script>
+		<script src="/tests/honk.test.js"></script>
+		<script>
+			QUnit.config.autostart = false;
+		</script>
+		<script>
+			window.addEventListener('DOMContentLoaded', function () {
+				QUnit.start();
+			});
+		</script>
+	</body>
+</html>
