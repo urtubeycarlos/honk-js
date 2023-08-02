@@ -4,7 +4,7 @@ const honk = new Honk();
 // Tests for the Honk class
 QUnit.module('Honk', function () {
 	QUnit.test('defineStore() should add a new store', function (assert) {
-		const store = new HonkStore('myStore', false);
+		const store = new HonkStore('myStore', honk.drivers.INDEXEDDB);
 		honk.defineStore(store);
 		assert.strictEqual(
 			honk.stores.size,
@@ -26,70 +26,61 @@ QUnit.module('Honk', function () {
 });
 
 // Tests for the HonkStore class
-QUnit.module('HonkStore', function () {
-	QUnit.test('defineState() should define a new state', function (assert) {
-		const store = new HonkStore('myStore', false);
-		store.defineState('count', 0);
-		assert.strictEqual(
-			store.states.count(),
-			0,
-			'The state was defined successfully'
-		);
-	});
+QUnit.module('HonkStore', async function () {
+	QUnit.test('Testing Honk', async function (assert) {
+		// Create a new Honk instance
+		const honk = new Honk();
 
-	QUnit.test('defineGetter() should define a new getter', function (assert) {
-		const store = new HonkStore('myStore', false);
-		store.defineState('count', 0);
-		store.defineGetter('isPositive', ['count'], function (states) {
-			return states.count > 0;
+		// Define a store
+		const store = new HonkStore('myStore', localforage.INDEXEDDB);
+		honk.defineStore(store);
+
+		// Define a state in the store
+		await store.defineState('counter', 0);
+
+		console.log(await store.states.counter());
+
+		// Get the store and the state value
+		const myStore = honk.useStore('myStore');
+		const value = await myStore.states.counter();
+		assert.equal(value, 0, 'State "counter" is initialized with 0');
+
+		// Update the state value
+		await myStore.states.counter(10);
+		const newValue = await myStore.states.counter();
+		assert.equal(newValue, 10, 'State "counter" is updated to 10');
+
+		store.defineGetter('doubleCounter', ['counter'], async (states) => {
+			return states.counter * 2;
 		});
-		assert.strictEqual(
-			store.getters.isPositive(),
-			false,
-			'The getter was defined successfully'
+
+		// Get the getter value
+		const result = await store.getters.doubleCounter();
+		assert.equal(
+			result,
+			20,
+			'Getter "doubleCounter" returns 20 (double of 10)'
 		);
-	});
 
-	QUnit.test('defineAction() should define a new action', function (assert) {
-		const store = new HonkStore('myStore', false);
-		store.defineState('count', 0);
-		store.defineAction('increment', ['count'], function (states) {
-			states.count(states.count() + 1);
-		});
-		store.actions.increment();
-		assert.strictEqual(
-			store.states.count(),
-			1,
-			'The action was executed successfully'
-		);
-	});
-
-	QUnit.test(
-		'defineActionAsync() should define a new async action',
-		async function (assert) {
-			try {
-				const done = assert.async(); // Get the "done" function from QUnit to control test completion
-
-				const store = new HonkStore('myStore', false);
-				store.defineActionAsync('fetchData', [], async function () {
-					return new Promise((resolve) => {
-						setTimeout(() => {
-							resolve('Data received');
-						}, 1000); // Simulate a 1000ms delay
-					});
-				});
-
-				const result = await store.actions.fetchData();
-				assert.strictEqual(
-					result,
-					'Data received',
-					'The async action was executed successfully and returned the expected data'
-				);
-
-				done(); // Marca el test como completado
-			} catch (error) {
-				console.error(error);
+		// Define an action
+		myStore.defineAction(
+			'incrementCounter',
+			['counter'],
+			async ({ counter }) => {
+				const actualCounter = await counter();
+				await counter(actualCounter + 1);
 			}
-		}
-	);
+		);
+
+		// Call the action
+		await myStore.actions.incrementCounter();
+
+		// Get the updated state value
+		const updatedValue = await myStore.states.counter();
+		assert.equal(
+			updatedValue,
+			11,
+			'Action "incrementCounter" increases the counter to 11'
+		);
+	});
 });

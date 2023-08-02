@@ -14,14 +14,15 @@
 		<script src="/@vite/client"></script>
 		<script src="/@vite/env"></script>
 		<script src="https://code.jquery.com/qunit/qunit-2.16.0.js"></script>
+		<script src="./js/localforage.js"></script>
 		<script src="/honk.js"></script>
 		<script src="/tests/honk.test.js"></script>
 		<script>
-			QUnit.config.autostart = false;
+			QUnit.config.autostart = false; // Desactivar el inicio automático de las pruebas
 		</script>
 		<script>
 			window.addEventListener('DOMContentLoaded', function () {
-				QUnit.start();
+				QUnit.start(); // Iniciar las pruebas manualmente cuando el DOM esté listo
 			});
 		</script>
 	</body>

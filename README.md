@@ -43,11 +43,11 @@ By providing a download link and including the `honk.js` file using a `<script>`
 
 ### Define states
 
-    store.defineState('count', 0);
+    await store.defineState('count', 0);
 
 ### Define getters
 
-    store.defineGetter('isPositive', ['count'], function (states)
+    store.defineGetter('isPositive', ['count'], async function (states)
     {
     	return states.count > 0;
     });

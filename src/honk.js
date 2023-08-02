@@ -5,6 +5,11 @@
 class Honk {
 	constructor() {
 		this.stores = new Map();
+		this.drivers = {
+			INDEXEDDB: localforage.INDEXEDDB,
+			LOCALSTORAGE: localforage.LOCALSTORAGE,
+			WEBSQL: localforage.WEBSQL,
+		};
 	}
 
 	defineStore(store) {
@@ -22,36 +27,52 @@ class Honk {
 }
 
 class HonkStore {
-	constructor(name, persist) {
+	constructor(name, driver) {
 		this.name = name;
 		this.states = {};
 		this.actions = {};
 		this.getters = {};
-		this.__storage = persist ? localStorage : sessionStorage;
+		localforage.setDriver(driver);
 	}
 
-	defineState(name, value) {
-		this.__storage.setItem(name, JSON.stringify(value));
-		this.states[name] = (newValue) => {
-			if (newValue) {
-				this.__storage.setItem(name, JSON.stringify(newValue));
+	clear() {
+		this.states = {};
+		this.actions = {};
+		this.getters = {};
+		localforage.clear();
+	}
+
+	async defineState(name, value) {
+		value = value || value === 0 ? 0 : await localforage.getItem(name);
+		await localforage.setItem(name, value);
+		this.states[name] = async (newValue) => {
+			if (newValue !== undefined) {
+				await localforage.setItem(name, newValue);
 			}
-			const storedValue = this.__storage.getItem(name);
-			return JSON.parse(storedValue);
+			return await localforage.getItem(name);
 		};
 	}
 
 	defineGetter(name, requiredStates, getter) {
-		this.getters[name] = () => {
-			const stateValues = requiredStates.reduce((acc, state) => {
-				const storedValueRef = this.states[state];
-				if (storedValueRef) {
-					acc[state] = storedValueRef();
-				}
-				return acc;
-			}, {});
+		this.getters[name] = async () => {
+			const stateValues = await Promise.all(
+				requiredStates.map(async (state) => {
+					const storedValueRef = this.states[state];
+					if (storedValueRef) {
+						return await storedValueRef();
+					}
+				})
+			);
 
-			return getter(stateValues);
+			const stateValuesObject = requiredStates.reduce(
+				(acc, state, index) => {
+					acc[state] = stateValues[index];
+					return acc;
+				},
+				{}
+			);
+
+			return getter(stateValuesObject);
 		};
 	}
 
@@ -73,26 +94,8 @@ class HonkStore {
 			}
 		};
 	}
-
-	defineActionAsync(name, requiredStates, asyncAction) {
-		this.actions[name] = async (...args) => {
-			const stateValues = requiredStates.reduce((acc, state) => {
-				const storedValueRef = this.states[state];
-				if (storedValueRef) {
-					acc[state] = storedValueRef();
-				}
-				return acc;
-			}, {});
-
-			try {
-				return await asyncAction(stateValues, ...args);
-			} catch (error) {
-				console.error(`Error in async action: ${name}`);
-				console.error(error);
-			}
-		};
-	}
 }
 
+window.honk = new Honk();
 window.Honk = Honk;
 window.HonkStore = HonkStore;
