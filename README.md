@@ -20,7 +20,7 @@ HonkJS is a lightweight state management library for vanilla JavaScript.
 
 ## Installation
 
--   Just download HonkJS from this link or from the releases section and include it in your project.
+-   Just download HonkJS from [this link](https://github.com/urtubeycarlos/honk-js/releases/tag/v1) or from the releases section and include it in your project.
     `<script src="/example.com/path/to/honk.js"></script>`
 
 Make sure to replace `/example.com/path/to/honk.js` with the actual path where the `honk.js` file is hosted.
@@ -79,8 +79,8 @@ To contribute to the project or develop additional features, follow these steps:
 
 ### Prerequisites
 
--   Node.js (version X.X.X)
--   NPM (version X.X.X)
+-   Node.js
+-   NPM
 
 ### Installation
 
